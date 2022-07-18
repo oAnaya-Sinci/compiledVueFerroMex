@@ -1,4 +1,4 @@
- /**
+/**
  * Welcome to your Workbox-powered service worker!
  *
  * You'll need to register this file in your web app and you should
@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.5fcf3a2cd5cfa23d465c55e68e8f8b00.js"
+  "/precache-manifest.7aa94b0520b98c0f69eb9ed93286cf13.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "vue-light-bootstrap-dashboard"});
