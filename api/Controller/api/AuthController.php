@@ -7,6 +7,9 @@ class AuthController extends BaseController
      */
     public function authLoginUser()
     {
+        // $id = uniqid();
+        // $id = bin2hex(openssl_random_pseudo_bytes(16));
+
         $strErrorDesc = '';
         $requestMethod = $_SERVER["REQUEST_METHOD"];
  

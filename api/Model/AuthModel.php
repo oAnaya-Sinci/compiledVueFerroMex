@@ -5,7 +5,7 @@ class AuthModel extends DataBase
 {
     public function authUser($params)
     {
-        $query = "SELECT * /*IF(COUNT(id) > 0, true, false) isAuthorized*/ FROM usuarios WHERE nickname = '" . $params['user'] . "' AND password = '" . $params['pass'] . "'";
+        $query = "SELECT IF(COUNT(id) > 0, true, false) isAuthorized FROM usuarios WHERE nickname = '" . $params['user'] . "' AND password = '" . $params['pass'] . "'";
         return $this->select($query);
     }
 }

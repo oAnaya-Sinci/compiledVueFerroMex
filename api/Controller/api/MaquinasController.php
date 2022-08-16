@@ -230,8 +230,8 @@ class MaquinasController extends BaseController
             try {
                 $maquinaModel = new MaquinasModel();
  
-                $arrMaquinas = $maquinaModel->setRegistroNotificacion();
-                $responseData = json_encode($arrMaquinas);
+                $maquinaModel->setRegistroNotificacion($_GET);
+                $responseData = json_encode("OK");
             } catch (Error $e) {
                 $strErrorDesc = $e->getMessage().' Something went wrong! Please contact support.';
                 $strErrorHeader = ' HTTP/1.1 500 Internal Server Error';

@@ -5,13 +5,14 @@ class MaquinasModel extends DataBase
 {
     public function getDataGPS($params)
     {
-        $query = "SELECT latitud, longitud FROM registrosmaquinarias WHERE fechaRegistro BETWEEN '" . $params['startDate'] ."' AND '" . $params['endedDate'] . "' AND idMaquina = " . $params['machineSelected'];
+        $query = "SELECT latitud, longitud FROM registrosmaquinarias WHERE fechaRegistro BETWEEN '" . $params['startDate'] ."' AND '" . $params['endedDate'] . "' AND idMaquina = " . $params['machineSelected'] . ";";
         return $this->select($query);
     }
 
-    public function getAcumuladoDiesel()
+    public function getAcumuladoDiesel($params)
     {
-        return $this->select("SELECT * FROM registrosmaquinarias");
+        $query = "SELECT SUM(nivel_tanque) AS suma_ FROM registrosmaquinarias WHERE idmaquina = ". $params["idMaquina"] ." GROUP BY ". $params["valueTypeTime"] . ";";
+        return $this->select($query);
     }
 
     public function getAcumuladoKilometers()
@@ -19,9 +20,10 @@ class MaquinasModel extends DataBase
         return $this->select("SELECT * FROM registrosmaquinarias");
     }
     
-    public function getAVGDiesel()
+    public function getAVGDiesel($params)
     {
-        return $this->select("SELECT * FROM registrosmaquinarias");
+        $query = "SELECT AVG(nivel_tanque) AS prom_nt FROM registrosmaquinarias WHERE idmaquina = ". $params["idMaquina"] ." GROUP BY ". $params["valueTypeTime"] . ";";
+        return $this->select($query);
     }
 
     public function getAVGKilometers()
@@ -34,7 +36,7 @@ class MaquinasModel extends DataBase
         return $this->select("SELECT * FROM registrosmaquinarias");
     }
     
-    public function setRegistroNotificacion()
+    public function setRegistroNotificacion($params)
     {
         return $this->select("INSERT INTO alarmsLogs() VALUES()");
     }
