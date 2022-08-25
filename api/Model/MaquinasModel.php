@@ -6,13 +6,23 @@ class MaquinasModel extends DataBase
     public function getFirstLocation($params)
     {
         $query = "SELECT id, latitud, longitud, nivel_tanque_porc AS tnq_porc, nivel_tanque FROM registrosmaquinarias";
-        $query .= " WHERE DATE_FORMAT(fechaRegistro, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['machineSelected'];
+        $query .= " WHERE DATE_FORMAT(fechaRegistro, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['idMachine'];
 
         $query .= " ORDER BY id ASC";
 
         $query .= " LIMIT 1";
 
-        // die( var_dump( $query ) );
+        return $this->select($query);
+    }
+
+    public function getLastLevenTank($params)
+    {
+        $query = "SELECT nivel_tanque FROM registrosmaquinarias";
+        $query .= " WHERE DATE_FORMAT(fechaRegistro, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['idMachine'];
+
+        $query .= " ORDER BY id ASC";
+
+        $query .= " LIMIT 1";
 
         return $this->select($query);
     }
@@ -20,7 +30,7 @@ class MaquinasModel extends DataBase
     public function getDataGPS($params)
     {
         $query = "SELECT id, latitud, longitud, fechaGps, nivel_tanque_porc AS tnq_porc, nivel_tanque FROM registrosmaquinarias";
-        $query .= " WHERE DATE_FORMAT(fechaRegistro, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['machineSelected'];
+        $query .= " WHERE DATE_FORMAT(fechaRegistro, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['idMachine'];
 
         $query .= " AND id >= " . $params['id']-1;
 
@@ -34,7 +44,10 @@ class MaquinasModel extends DataBase
     }
 
     public function getAcumuladoDiesel($params)
-    {        
+    {
+      
+        $ultimoNivelTanque = $this->getLastLevenTank($params)[0]['nivel_tanque'];
+
         $newDate = explode("-", $params['startDate']);;
         $typeGroup = "";
         $formatDate = "";
@@ -59,12 +72,13 @@ class MaquinasModel extends DataBase
               break;
         }
 
-        $query = "SELECT SUM(nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
+        $query = "SELECT SUM( ".$ultimoNivelTanque." - nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
+        // $query = "SELECT SUM(nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
         $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaRegistro, ". $formatDate .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
         $query .= " GROUP BY " . $typeGroup;
         $query .= " ORDER BY " . $typeGroup;
-// die( var_dump( $query ) );
-        return $this->select($query);
+
+        return [$this->select($query), $ultimoNivelTanque];
     }
 
     public function getAcumuladoKilometers()
