@@ -2,6 +2,39 @@
 
 class MaquinasController extends BaseController
 {
+
+    public function obtainFirstLocation(){
+
+        $strErrorDesc = '';
+        $requestMethod = $_SERVER["REQUEST_METHOD"];
+ 
+        if (strtoupper($requestMethod) == 'GET') {
+            try {
+                $maquinaModel = new MaquinasModel();
+ 
+                $fistLocation = $maquinaModel->getFirstLocation($_GET);
+                $responseData = json_encode($fistLocation);
+            } catch (Error $e) {
+                $strErrorDesc = $e->getMessage().' Something went wrong! Please contact support.';
+                $strErrorHeader = ' HTTP/1.1 500 Internal Server Error';
+            }
+        } else {
+            $strErrorDesc = 'Method not supported';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+        }
+ 
+        // send output
+        if (!$strErrorDesc) {
+            $this->sendOutput(
+                $responseData,
+                array('Content-Type: application/json', 'HTTP/1.1 200 OK')
+            );
+        } else {
+            $this->sendOutput(json_encode(array('error' => $strErrorDesc)), 
+                array('Content-Type: application/json', $strErrorHeader)
+            );
+        }
+    }
     /**
      * "/maquinas/obtain data GPS" Endpoint - Get data of GPS
      */
@@ -14,7 +47,7 @@ class MaquinasController extends BaseController
             try {
                 $maquinaModel = new MaquinasModel();
  
-                $arrMaquinas = $maquinaModel->getAcumuladoDiesel();
+                $arrMaquinas = $maquinaModel->getAcumuladoDiesel($_GET);
                 $responseData = json_encode($arrMaquinas);
             } catch (Error $e) {
                 $strErrorDesc = $e->getMessage().' Something went wrong! Please contact support.';
@@ -86,7 +119,7 @@ class MaquinasController extends BaseController
             try {
                 $maquinaModel = new MaquinasModel();
  
-                $arrMaquinas = $maquinaModel->getAVGDiesel();
+                $arrMaquinas = $maquinaModel->getAVGDiesel($_GET);
                 $responseData = json_encode($arrMaquinas);
             } catch (Error $e) {
                 $strErrorDesc = $e->getMessage().' Something went wrong! Please contact support.';
