@@ -6,7 +6,7 @@ class MaquinasModel extends DataBase
     public function getFirstLocation($params)
     {
         $query = "SELECT id, latitud, longitud, nivel_tanque_porc AS tnq_porc, nivel_tanque FROM registrosmaquinarias";
-        $query .= " WHERE DATE_FORMAT(fechaRegistro, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['idMachine'];
+        $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['idMachine'];
 
         $query .= " ORDER BY id ASC";
 
@@ -15,10 +15,10 @@ class MaquinasModel extends DataBase
         return $this->select($query);
     }
 
-    public function getLastLevenTank($params)
+    public function getLastLevenTank($formatDate, $newDate, $idMachine)
     {
         $query = "SELECT nivel_tanque FROM registrosmaquinarias";
-        $query .= " WHERE DATE_FORMAT(fechaRegistro, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['idMachine'];
+        $query .= " WHERE DATE_FORMAT(fechaPLC, ".$formatDate.") = '" . $newDate ."' AND idMaquina = " . $idMachine;
 
         $query .= " ORDER BY id ASC";
 
@@ -30,53 +30,84 @@ class MaquinasModel extends DataBase
     public function getDataGPS($params)
     {
         $query = "SELECT id, latitud, longitud, fechaGps, nivel_tanque_porc AS tnq_porc, nivel_tanque FROM registrosmaquinarias";
-        $query .= " WHERE DATE_FORMAT(fechaRegistro, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['idMachine'];
+        $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['idMachine'];
 
-        $query .= " AND id >= " . $params['id']-1;
+        // $query .= " AND id >= " . $params['id']-1;
 
         $query .= " ORDER BY id DESC";
 
-        // $query .= " LIMIT 2";
-
-        // die( var_dump( $query ) );
-
+        if(!$params['firstRead'])
+          $query .= " LIMIT 2";
+// die( var_dump( $query ) );
         return $this->select($query);
     }
 
     public function getAcumuladoDiesel($params)
     {
-      
-        $ultimoNivelTanque = $this->getLastLevenTank($params)[0]['nivel_tanque'];
+        $auxdate = explode(" ", $params['startDate'])[0];
 
-        $newDate = explode("-", $params['startDate']);;
+        $newDate = explode("-", $auxdate);
         $typeGroup = "";
         $formatDate = "";
+        $formatDate2 = "";
+        $order = "";
         switch($params['type']){
 
-            case "day":
+            case "hour":
               $newDate = $params['startDate'];
-              $typeGroup = "HOUR(fechaRegistro)";
-              $formatDate = "'%Y-%m-%d'";
+              $typeGroup = "MINUTE(fechaPLC)";
+              $formatDate = "'%Y-%m-%d %H:%i'";
+              $formatDate2 = "'%Y-%m-%d %H'";
+              $order = ", STATUS_TANQUE ASC";
+              // $order = ", STATUS_TANQUE DESC";
+              break;
+
+            case "day":
+              $newDate = $auxdate;
+              $typeGroup = "HOUR(fechaPLC)";
+              $formatDate = "'%Y-%m-%d %H'";
+              $formatDate2 = "'%Y-%m-%d'";
+              $order = ", STATUS_TANQUE ASC";
+              // $order = ", STATUS_TANQUE DESC";
               break;
 
             case "month":
               $newDate = $newDate[0] . "-" . $newDate[1];
-              $typeGroup = "DAY(fechaRegistro)";
-              $formatDate = "'%Y-%m'";
+              $typeGroup = "DAY(fechaPLC)";
+              $formatDate = "'%Y-%m-%d'";
+              $formatDate2 = "'%Y-%m'";
+              // $order = ", STATUS_TANQUE ASC";
+              $order = ", STATUS_TANQUE DESC";
               break;
 
             case "year":
               $newDate = $newDate[0];
-              $typeGroup = "MONTH(fechaRegistro)";
-              $formatDate = "'%Y'";
+              $typeGroup = "MONTH(fechaPLC)";
+              $formatDate = "'%Y-%m'";
+              $formatDate2 = "'%Y'";
+              // $order = ", STATUS_TANQUE ASC";
+              $order = ", STATUS_TANQUE DESC";
               break;
         }
 
-        $query = "SELECT SUM( ".$ultimoNivelTanque." - nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
+        $ultimoNivelTanque = $this->getLastLevenTank($formatDate2, $newDate, $params['idMachine'])[0]['nivel_tanque'];
+
+        /*
+        $query = "SELECT AVG( ".$ultimoNivelTanque." - nivel_tanque ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
+        // $query = "SELECT AVG( DISTINCT nivel_tanque - ".$ultimoNivelTanque." ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
+        // $query = "SELECT SUM( ".$ultimoNivelTanque." - nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
         // $query = "SELECT SUM(nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
-        $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaRegistro, ". $formatDate .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
+        $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
         $query .= " GROUP BY " . $typeGroup;
         $query .= " ORDER BY " . $typeGroup;
+        */
+
+        $query = "SELECT DISTINCT";
+        $query .= " nivel_tanque AS STATUS_TANQUE, DATE_FORMAT(fechaPLC, ". $formatDate .") AS Date_flag, ".$typeGroup." AS GROUPER";
+        $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
+        $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .") ". $order .";";
+
+        // die( var_dump( $query ) );
 
         return [$this->select($query), $ultimoNivelTanque];
     }
@@ -88,36 +119,54 @@ class MaquinasModel extends DataBase
     
     public function getAVGDiesel($params)
     {
-      $newDate = explode("-", $params['startDate']);;
+      // $ultimoNivelTanque = $this->getLastLevenTank($params)[0]['nivel_tanque'];
+
+      $auxdate = explode(" ", $params['startDate'])[0];
+
+      $newDate = explode("-", $auxdate);
       $typeGroup = "";
       $formatDate = "";
+      $formatDate2 = "";
       switch($params['type']){
 
-          case "day":
+          case "hour":
             $newDate = $params['startDate'];
-            $typeGroup = "HOUR(fechaRegistro)";
-            $formatDate = "'%Y-%m-%d'";
+            $typeGroup = "MINUTE(fechaPLC)";
+            $formatDate = "'%Y-%m-%d %H:%i'";
+            $formatDate2 = "'%Y-%m-%d %H'";
+            break;
+
+          case "day":
+            $newDate = $auxdate;
+            $typeGroup = "HOUR(fechaPLC)";
+            $formatDate = "'%Y-%m-%d %H'";
+            $formatDate2 = "'%Y-%m-%d'";
             break;
 
           case "month":
             $newDate = $newDate[0] . "-" . $newDate[1];
-            $typeGroup = "DAY(fechaRegistro)";
-            $formatDate = "'%Y-%m'";
+            $typeGroup = "DAY(fechaPLC)";
+            $formatDate = "'%Y-%m-%d'";
+            $formatDate2 = "'%Y-%m'";
             break;
 
           case "year":
             $newDate = $newDate[0];
-            $typeGroup = "MONTH(fechaRegistro)";
-            $formatDate = "'%Y'";
+            $typeGroup = "MONTH(fechaPLC)";
+            $formatDate = "'%Y-%m'";
+            $formatDate2 = "'%Y'";
             break;
       }
 
+      $ultimoNivelTanque = $this->getLastLevenTank($formatDate2, $newDate, $params['idMachine'])[0]['nivel_tanque'];
+      
       $query = "SELECT AVG(nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
-      $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaRegistro, ". $formatDate .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
+      $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
       $query .= " GROUP BY " . $typeGroup;
       $query .= " ORDER BY " . $typeGroup;
+      // $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .") ASC;";
 
-      return $this->select($query);
+      return [$this->select($query), $ultimoNivelTanque];
     }
 
     public function getAVGKilometers()
