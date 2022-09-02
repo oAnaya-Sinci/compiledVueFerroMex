@@ -3,6 +3,14 @@ require_once PROJECT_ROOT_PATH . "/Model/DataBase.php";
  
 class MaquinasModel extends DataBase
 {
+
+    public function getLocomotoras(){
+
+      $query = "SELECT * FROM maquinas;";
+
+      return $this->select($query);
+    }
+
     public function getFirstLocation($params)
     {
         $query = "SELECT id, latitud, longitud, nivel_tanque_porc AS tnq_porc, nivel_tanque FROM registrosmaquinarias";
@@ -15,12 +23,15 @@ class MaquinasModel extends DataBase
         return $this->select($query);
     }
 
-    public function getLastLevenTank($formatDate, $newDate, $idMachine)
+    public function getLastLevenTank($formatDate, $newDate, $idMachine, $typeGroup)
     {
-        $query = "SELECT nivel_tanque FROM registrosmaquinarias";
+        $query = "SELECT AVG(nivel_tanque) AS nivel_tanque FROM registrosmaquinarias";
         $query .= " WHERE DATE_FORMAT(fechaPLC, ".$formatDate.") = '" . $newDate ."' AND idMaquina = " . $idMachine;
 
-        $query .= " ORDER BY id ASC";
+        $query .= " GROUP BY " . $typeGroup;
+
+        // $query .= " ORDER BY id ASC";
+        $query .= " ORDER BY nivel_tanque DESC";
 
         $query .= " LIMIT 1";
 
@@ -38,7 +49,7 @@ class MaquinasModel extends DataBase
 
         if(!$params['firstRead'])
           $query .= " LIMIT 2";
-// die( var_dump( $query ) );
+
         return $this->select($query);
     }
 
@@ -90,7 +101,7 @@ class MaquinasModel extends DataBase
               break;
         }
 
-        $ultimoNivelTanque = $this->getLastLevenTank($formatDate2, $newDate, $params['idMachine'])[0]['nivel_tanque'];
+        $ultimoNivelTanque = $this->getLastLevenTank($formatDate2, $newDate, $params['idMachine'], $typeGroup)[0]['nivel_tanque'];
 
         /*
         $query = "SELECT AVG( ".$ultimoNivelTanque." - nivel_tanque ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
@@ -104,7 +115,10 @@ class MaquinasModel extends DataBase
 
         $query = "SELECT DISTINCT";
         $query .= " nivel_tanque AS STATUS_TANQUE, DATE_FORMAT(fechaPLC, ". $formatDate .") AS Date_flag, ".$typeGroup." AS GROUPER";
+        $query .= ", arranque, operacion";
         $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
+        // $query .=  " AND arranque = 1";
+        $query .=  " AND nivel_tanque > 473";
         $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .") ". $order .";";
 
         // die( var_dump( $query ) );
@@ -150,7 +164,7 @@ class MaquinasModel extends DataBase
             $formatDate2 = "'%Y-%m'";
             break;
 
-          case "year":
+          case "year":  
             $newDate = $newDate[0];
             $typeGroup = "MONTH(fechaPLC)";
             $formatDate = "'%Y-%m'";
@@ -158,13 +172,19 @@ class MaquinasModel extends DataBase
             break;
       }
 
-      $ultimoNivelTanque = $this->getLastLevenTank($formatDate2, $newDate, $params['idMachine'])[0]['nivel_tanque'];
+      $ultimoNivelTanque = $this->getLastLevenTank($formatDate2, $newDate, $params['idMachine'], $typeGroup)[0]['nivel_tanque'];
       
+      // $query = "SELECT ( ". $ultimoNivelTanque ." - AVG(nivel_tanque) ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
       $query = "SELECT AVG(nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
+      // $query .= ", arranque, operacion";
       $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
+      $query .=  " AND arranque = 1";
+      $query .=  " AND nivel_tanque > 473";
       $query .= " GROUP BY " . $typeGroup;
       $query .= " ORDER BY " . $typeGroup;
       // $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .") ASC;";
+
+      // die( var_dump( $query ) );
 
       return [$this->select($query), $ultimoNivelTanque];
     }
