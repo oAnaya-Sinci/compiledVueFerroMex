@@ -13,3 +13,5 @@ require_once PROJECT_ROOT_PATH . "/Controller/api/BaseController.php";
 require_once PROJECT_ROOT_PATH . "/Model/MaquinasModel.php";
 
 require_once PROJECT_ROOT_PATH . "/Model/AuthModel.php";
+
+require_once PROJECT_ROOT_PATH . "/Model/tokenPassword.php";

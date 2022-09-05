@@ -103,23 +103,13 @@ class MaquinasModel extends DataBase
 
         $ultimoNivelTanque = $this->getLastLevenTank($formatDate2, $newDate, $params['idMachine'], $typeGroup)[0]['nivel_tanque'];
 
-        /*
-        $query = "SELECT AVG( ".$ultimoNivelTanque." - nivel_tanque ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
-        // $query = "SELECT AVG( DISTINCT nivel_tanque - ".$ultimoNivelTanque." ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
-        // $query = "SELECT SUM( ".$ultimoNivelTanque." - nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
-        // $query = "SELECT SUM(nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
-        $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
-        $query .= " GROUP BY " . $typeGroup;
-        $query .= " ORDER BY " . $typeGroup;
-        */
-
         $query = "SELECT DISTINCT";
         $query .= " nivel_tanque AS STATUS_TANQUE, DATE_FORMAT(fechaPLC, ". $formatDate .") AS Date_flag, ".$typeGroup." AS GROUPER";
         $query .= ", arranque, operacion";
         $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
-        // $query .=  " AND arranque = 1";
         $query .=  " AND nivel_tanque > 473";
-        $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .") ". $order .";";
+        // $query .=  " AND arranque = 1";
+        $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .")". $order .";";
 
         // die( var_dump( $query ) );
 
@@ -176,13 +166,12 @@ class MaquinasModel extends DataBase
       
       // $query = "SELECT ( ". $ultimoNivelTanque ." - AVG(nivel_tanque) ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
       $query = "SELECT AVG(nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
-      // $query .= ", arranque, operacion";
+      // $query = "SELECT ( MAX(nivel_tanque) - MIN(nivel_tanque) ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
       $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
       $query .=  " AND arranque = 1";
       $query .=  " AND nivel_tanque > 473";
       $query .= " GROUP BY " . $typeGroup;
       $query .= " ORDER BY " . $typeGroup;
-      // $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .") ASC;";
 
       // die( var_dump( $query ) );
 
