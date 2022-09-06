@@ -43,7 +43,7 @@ class MaquinasModel extends DataBase
         $query = "SELECT id, latitud, longitud, fechaGps, nivel_tanque_porc AS tnq_porc, nivel_tanque FROM registrosmaquinarias";
         $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['idMachine'];
 
-        // $query .= " AND id >= " . $params['id']-1;
+        $query .=  " AND arranque = 1";
 
         $query .= " ORDER BY id DESC";
 
@@ -69,8 +69,8 @@ class MaquinasModel extends DataBase
               $typeGroup = "MINUTE(fechaPLC)";
               $formatDate = "'%Y-%m-%d %H:%i'";
               $formatDate2 = "'%Y-%m-%d %H'";
-              $order = ", STATUS_TANQUE ASC";
-              // $order = ", STATUS_TANQUE DESC";
+              // $order = ", STATUS_TANQUE ASC";
+              $order = ", STATUS_TANQUE DESC";
               break;
 
             case "day":
@@ -78,8 +78,8 @@ class MaquinasModel extends DataBase
               $typeGroup = "HOUR(fechaPLC)";
               $formatDate = "'%Y-%m-%d %H'";
               $formatDate2 = "'%Y-%m-%d'";
-              $order = ", STATUS_TANQUE ASC";
-              // $order = ", STATUS_TANQUE DESC";
+              // $order = ", STATUS_TANQUE ASC";
+              $order = ", STATUS_TANQUE DESC";
               break;
 
             case "month":
