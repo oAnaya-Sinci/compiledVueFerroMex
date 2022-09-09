@@ -29,6 +29,19 @@ class DataBase
         }
         return false;
     }
+
+    public function insert($query){
+
+        try {
+            $stmt = $this->executeStatement( $query );
+            $stmt->close();
+ 
+            return "OK";
+        } catch(Exception $e) {
+            throw New Exception( $e->getMessage() );
+        }
+        return false;
+    }
  
     private function executeStatement($query = "" , $params = [])
     {

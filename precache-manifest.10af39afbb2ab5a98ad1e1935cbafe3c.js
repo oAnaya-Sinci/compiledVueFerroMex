@@ -1,23 +1,23 @@
 self.__precacheManifest = [
   {
-    "revision": "9450799a827447f19a96",
-    "url": "/css/app.ab16aa38.css"
+    "revision": "137c1013bab6dc1068cd",
+    "url": "/css/app.a4d8f2f6.css"
   },
   {
-    "revision": "9450799a827447f19a96",
-    "url": "/js/app.61e3e245.js"
+    "revision": "137c1013bab6dc1068cd",
+    "url": "/js/app.5b33cc39.js"
   },
   {
     "revision": "e2d928018cb3ba2a805c",
     "url": "/js/chunk-2d219ff9.0aab29fd.js"
   },
   {
-    "revision": "3d58ea16fe3dfd4dcb17",
+    "revision": "36b86c458e0dc724f393",
     "url": "/css/chunk-vendors.be1b32dc.css"
   },
   {
-    "revision": "3d58ea16fe3dfd4dcb17",
-    "url": "/js/chunk-vendors.105fa041.js"
+    "revision": "36b86c458e0dc724f393",
+    "url": "/js/chunk-vendors.babc2c38.js"
   },
   {
     "revision": "8224e0160e362e117cbe00495919e2af",
@@ -36,7 +36,7 @@ self.__precacheManifest = [
     "url": "/img/nucleo-icons.ae42fa52.svg"
   },
   {
-    "revision": "492876e84f5f6ee952e176fcbffc8546",
+    "revision": "2d96c0b5384ed1f89eb9b0394cd8d56e",
     "url": "/index.html"
   },
   {
@@ -50,6 +50,10 @@ self.__precacheManifest = [
   {
     "revision": "be74132f42ae1d3502f9a9b9fff68ac1",
     "url": "/Dashboard.PNG"
+  },
+  {
+    "revision": "e9b79bbc135cf6d3d1e4309f796c7391",
+    "url": "/img/backgroundFerroMex-6.jpg"
   },
   {
     "revision": "a9615bac158705203261e8348f574cc8",
@@ -68,36 +72,36 @@ self.__precacheManifest = [
     "url": "/img/faces/face-2.jpg"
   },
   {
-    "revision": "ce7a6b79aa55041f7ae36f6ce22231fe",
-    "url": "/img/faces/face-3.jpg"
+    "revision": "4ab22eca4053c14a34e4bdb6390deae9",
+    "url": "/img/faces/face-5.jpg"
   },
   {
     "revision": "0b68eb8f1cde1fc9987a9196df05b96a",
     "url": "/img/faces/face-4.jpg"
   },
   {
-    "revision": "4b87e628f4ef9988718860890b2a682f",
-    "url": "/img/faces/face-6.jpg"
+    "revision": "ce7a6b79aa55041f7ae36f6ce22231fe",
+    "url": "/img/faces/face-3.jpg"
   },
   {
-    "revision": "4ab22eca4053c14a34e4bdb6390deae9",
-    "url": "/img/faces/face-5.jpg"
+    "revision": "4b87e628f4ef9988718860890b2a682f",
+    "url": "/img/faces/face-6.jpg"
   },
   {
     "revision": "bf1684a30a86ba1b222aab3acff16356",
     "url": "/img/faces/face-7.jpg"
   },
   {
-    "revision": "43b98081492ac3bcb4a1fac6cf709403",
-    "url": "/img/faces/tim_vector.jpe"
+    "revision": "996d8248f580f8e26e6c45c67da9b5a6",
+    "url": "/img/favicon.png"
   },
   {
     "revision": "29330e4bf0a59799d2472d861bae7062",
     "url": "/img/FerromexLogo.jpg"
   },
   {
-    "revision": "996d8248f580f8e26e6c45c67da9b5a6",
-    "url": "/img/favicon.png"
+    "revision": "43b98081492ac3bcb4a1fac6cf709403",
+    "url": "/img/faces/tim_vector.jpe"
   },
   {
     "revision": "83c4dc1946b4c2fc595d0b983206bf09",
@@ -108,48 +112,36 @@ self.__precacheManifest = [
     "url": "/img/foto_galeria_multimedia.jpg"
   },
   {
-    "revision": "e9b79bbc135cf6d3d1e4309f796c7391",
-    "url": "/img/backgroundFerroMex-6.jpg"
-  },
-  {
-    "revision": "0a337c37f03c0462996b7b03758fa72b",
-    "url": "/img/loading-bubbles.svg"
+    "revision": "d27fbc90c2e644dfdc9765640dc713b9",
+    "url": "/img/mask.png"
   },
   {
     "revision": "f575a04ebbb31b5798a4c54783e745a2",
     "url": "/img/new_logo.png"
   },
   {
-    "revision": "6be21e8a1b7d63048728851c6003e189",
-    "url": "/img/sidebar-1.jpg"
-  },
-  {
-    "revision": "d27fbc90c2e644dfdc9765640dc713b9",
-    "url": "/img/mask.png"
-  },
-  {
     "revision": "7a4ce7cc040fc1cb8176cde106e9232f",
     "url": "/img/sidebar-2.jpg"
-  },
-  {
-    "revision": "cd253e23ed052deeb80b42d2ed772183",
-    "url": "/img/sidebar-3.jpg"
   },
   {
     "revision": "897b4cf909210560a84398d36da51983",
     "url": "/img/sidebar-4.jpg"
   },
   {
+    "revision": "0a337c37f03c0462996b7b03758fa72b",
+    "url": "/img/loading-bubbles.svg"
+  },
+  {
     "revision": "9ebea76ee1225f00d882b21547a7b49f",
     "url": "/img/sidebar-5.jpg"
   },
   {
-    "revision": "4197fddbc7e8ea4e381d9350243d784f",
-    "url": "/img/sidebar-7.jpg"
+    "revision": "cd253e23ed052deeb80b42d2ed772183",
+    "url": "/img/sidebar-3.jpg"
   },
   {
-    "revision": "c2a605fbc0e687b2e1b4b90a7c445cdd",
-    "url": "/img/vue-logo.png"
+    "revision": "6be21e8a1b7d63048728851c6003e189",
+    "url": "/img/sidebar-1.jpg"
   },
   {
     "revision": "44bf13a71a4db6e15913fe8af9296711",
@@ -160,16 +152,12 @@ self.__precacheManifest = [
     "url": "/robots.txt"
   },
   {
-    "revision": "a07bb811447e50c195622ed97b2a08ce",
-    "url": "/img/sidebar-7.png"
+    "revision": "4197fddbc7e8ea4e381d9350243d784f",
+    "url": "/img/sidebar-7.jpg"
   },
   {
     "revision": "62f9e45c668f1725d4f4e806727a87bc",
     "url": "/img/backgroundFerroMex-2.jpg"
-  },
-  {
-    "revision": "062f781573b6b7c9e4a49d548fd9b5e8",
-    "url": "/img/backgroundFerroMex-7.jpg"
   },
   {
     "revision": "679df1c046cb9e37c63463ab5e4f42e7",
@@ -178,6 +166,18 @@ self.__precacheManifest = [
   {
     "revision": "db80564cf4edaf6d0ae865779b945828",
     "url": "/img/backgroundFerroMex-4.jpg"
+  },
+  {
+    "revision": "a07bb811447e50c195622ed97b2a08ce",
+    "url": "/img/sidebar-7.png"
+  },
+  {
+    "revision": "062f781573b6b7c9e4a49d548fd9b5e8",
+    "url": "/img/backgroundFerroMex-7.jpg"
+  },
+  {
+    "revision": "c2a605fbc0e687b2e1b4b90a7c445cdd",
+    "url": "/img/vue-logo.png"
   },
   {
     "revision": "9f20c14a6f1c836e746a991e3bb4ca91",

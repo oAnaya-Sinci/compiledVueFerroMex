@@ -40,12 +40,12 @@ class MaquinasModel extends DataBase
 
     public function getDataGPS($params)
     {
-        $query = "SELECT id, latitud, longitud, fechaGps, nivel_tanque_porc AS tnq_porc, nivel_tanque FROM registrosmaquinarias";
+        $query = "SELECT id, latitud, longitud, fechaGps, nivel_tanque_porc AS tnq_porc, nivel_tanque, arranque, operacion, UNIX_TIMESTAMP( fechaPLC ) AS timestamp_PLC, fechaPLC FROM registrosmaquinarias";
         $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['idMachine'];
 
         $query .=  " AND arranque = 1";
 
-        $query .= " ORDER BY id DESC";
+        $query .= " ORDER BY id ASC";
 
         if(!$params['firstRead'])
           $query .= " LIMIT 2";
@@ -185,11 +185,30 @@ class MaquinasModel extends DataBase
     
     public function getRegistroNotificacion()
     {
-        return $this->select("SELECT * FROM registrosmaquinarias");
+        return $this->select("SELECT id, codigoError AS codigo, mensajeError AS mensaje, tipoError AS tipo, idMaquina AS maquina, fechaRegistro AS fecha, fechaMaquina AS fecha_plc FROM alarmsLogs");
+        // return $this->select("SELECT * FROM registrosmaquinarias");
     }
     
     public function setRegistroNotificacion($params)
     {
-        return $this->select("INSERT INTO alarmsLogs() VALUES()");
+      // $data = json_decode( $params, true )['data'];
+      $data = json_decode( $params, true );
+
+      $dataMessage = $data['dataError'];
+      $dataFromDB = $data['dataError']['dataDB'];
+
+      // die( var_dump( $data ) );
+      
+      $query = "INSERT INTO alarmsLogs(codigoError, mensajeError, tipoError, idMaquina, fechaRegistro, fechaMaquina)";
+      $query .= "VALUES( '".$dataMessage['codigoError']."', '".$dataMessage['message']."', '".$dataMessage['typeError']."', ". $dataFromDB['idMaquina'] .", NOW(), '". $dataFromDB['fecha'] ."' )";
+  
+      // die( var_dump( $query ) );
+
+      return $this->insert($query);
+    }
+
+    public function getDecensoDiesel($params)
+    {
+        return $this->select("SELECT AVG( nivel_tanque ) AS TOT_NIVEL, idMaquina, fechaPLC FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d %H') = '" . $params['date'] . "' GROUP BY fechaPLC, idMaquina; ");
     }
 }
