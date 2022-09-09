@@ -13,11 +13,11 @@ class AuthController extends BaseController
         $strErrorDesc = '';
         $requestMethod = $_SERVER["REQUEST_METHOD"];
  
-        if (strtoupper($requestMethod) == 'GET') {
+        if (strtoupper($requestMethod) == 'POST') {
             try {
                 $authUser = new AuthModel();
  
-                $isAuth = $authUser->authUser($_GET);
+                $isAuth = $authUser->authUser($_POST);
                 $responseData = json_encode($isAuth);
             } catch (Error $e) {
                 $strErrorDesc = $e->getMessage().' Something went wrong! Please contact support.';
