@@ -211,4 +211,20 @@ class MaquinasModel extends DataBase
     {
         return $this->select("SELECT AVG( nivel_tanque ) AS TOT_NIVEL, idMaquina, fechaPLC FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d %H') = '" . $params['date'] . "' GROUP BY fechaPLC, idMaquina; ");
     }
+
+    public function getDataTable($params){
+
+      $query = "SELECT";
+      $query .= " ( MAX(nivel_tanque) - MIN(nivel_tanque) ) AS consumo, HOUR(fechaPLC) AS hora , IF(operacion = 1, 'Motor On, Opreacion On', 'Motor On, Operacion Off') AS operacion, operacion AS oprc";
+      $query .= " FROM registrosmaquinarias";
+      $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '". $params['date'] ."' ";
+      // $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '2022-09-02' ";
+      $query .= " AND idmaquina = 1 AND nivel_tanque > 473 AND arranque = 1";
+      $query .= " GROUP BY HOUR(fechaPLC), operacion";
+      $query .= " ORDER BY HOUR(fechaPLC)";
+
+      // die( var_dump( $query ) );
+
+      return $this->select( $query );
+    }
 }
