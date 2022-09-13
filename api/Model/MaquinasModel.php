@@ -216,6 +216,7 @@ class MaquinasModel extends DataBase
 
       $query = "SELECT";
       $query .= " ( MAX(nivel_tanque) - MIN(nivel_tanque) ) AS consumo, HOUR(fechaPLC) AS hora , IF(operacion = 1, 'Motor On, Opreacion On', 'Motor On, Operacion Off') AS operacion, operacion AS oprc";
+      // $query .= " AVG(nivel_tanque) AS consumo, HOUR(fechaPLC) AS hora , IF(operacion = 1, 'Motor On, Opreacion On', 'Motor On, Operacion Off') AS operacion, operacion AS oprc";
       $query .= " FROM registrosmaquinarias";
       $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '". $params['date'] ."' ";
       // $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '2022-09-02' ";
@@ -225,6 +226,9 @@ class MaquinasModel extends DataBase
 
       // die( var_dump( $query ) );
 
+      $ultimoNivelTanque = $this->getLastLevenTank("'%Y-%m-%d'", $params['date'], $params['idMachine'], 'HOUR(fechaPLC)')[0]['nivel_tanque'];
+
+      // return [$this->select( $query ), $ultimoNivelTanque];
       return $this->select( $query );
     }
 }
