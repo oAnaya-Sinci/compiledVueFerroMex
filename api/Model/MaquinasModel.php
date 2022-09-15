@@ -78,8 +78,8 @@ class MaquinasModel extends DataBase
               $typeGroup = "HOUR(fechaPLC)";
               $formatDate = "'%Y-%m-%d %H'";
               $formatDate2 = "'%Y-%m-%d'";
-              // $order = ", STATUS_TANQUE ASC";
-              $order = ", STATUS_TANQUE DESC";
+              $order = ", STATUS_TANQUE ASC";
+              // $order = ", STATUS_TANQUE DESC";
               break;
 
             case "month":
@@ -107,9 +107,17 @@ class MaquinasModel extends DataBase
         $query .= " nivel_tanque AS STATUS_TANQUE, DATE_FORMAT(fechaPLC, ". $formatDate .") AS Date_flag, ".$typeGroup." AS GROUPER";
         $query .= ", arranque, operacion";
         $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
-        $query .=  " AND nivel_tanque > 473";
+        $query .= " AND nivel_tanque > 473";
         // $query .=  " AND arranque = 1";
         $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .")". $order .";";
+
+        // $query = "SELECT";
+        // $query .= " AVG(nivel_tanque) AS STATUS_TANQUE, DATE_FORMAT(fechaPLC, ". $formatDate .") AS Date_flag, ".$typeGroup." AS GROUPER";
+        // $query .= ", arranque, operacion";
+        // $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
+        // $query .= " AND nivel_tanque > 473";
+        // $query .= " GROUP BY DATE_FORMAT(fechaPLC, ". $formatDate ."), " . $typeGroup . ", operacion, arranque";
+        // $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .")". $order .";";
 
         // die( var_dump( $query ) );
 
@@ -164,13 +172,14 @@ class MaquinasModel extends DataBase
 
       $ultimoNivelTanque = $this->getLastLevenTank($formatDate2, $newDate, $params['idMachine'], $typeGroup)[0]['nivel_tanque'];
       
-      // $query = "SELECT ( ". $ultimoNivelTanque ." - AVG(nivel_tanque) ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
-      $query = "SELECT AVG(nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
-      // $query = "SELECT ( MAX(nivel_tanque) - MIN(nivel_tanque) ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
+      $query = "SELECT";
+      // $query = " ( ". $ultimoNivelTanque ." - AVG(nivel_tanque) ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
+      $query .= " AVG(nivel_tanque) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER, IF(operacion = 1, 'Motor On, Opreacion On', 'Motor On, Operacion Off') AS operacion, operacion AS oprc";
+      // $query = " ( MAX(nivel_tanque) - MIN(nivel_tanque) ) AS STATUS_TANQUE, ". $typeGroup . " AS GROUPER";
       $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
       $query .=  " AND arranque = 1";
       $query .=  " AND nivel_tanque > 473";
-      $query .= " GROUP BY " . $typeGroup;
+      $query .= " GROUP BY " . $typeGroup . ", operacion";
       $query .= " ORDER BY " . $typeGroup;
 
       // die( var_dump( $query ) );
@@ -215,12 +224,12 @@ class MaquinasModel extends DataBase
     public function getDataTable($params){
 
       $query = "SELECT";
-      $query .= " ( MAX(nivel_tanque) - MIN(nivel_tanque) ) AS consumo, HOUR(fechaPLC) AS hora , IF(operacion = 1, 'Motor On, Opreacion On', 'Motor On, Operacion Off') AS operacion, operacion AS oprc";
-      // $query .= " AVG(nivel_tanque) AS consumo, HOUR(fechaPLC) AS hora , IF(operacion = 1, 'Motor On, Opreacion On', 'Motor On, Operacion Off') AS operacion, operacion AS oprc";
+      // $query .= " ( MAX(nivel_tanque) - MIN(nivel_tanque) ) AS consumo, HOUR(fechaPLC) AS hora , IF(operacion = 1, 'Motor On, Opreacion On', 'Motor On, Operacion Off') AS operacion, operacion AS oprc";
+      $query .= " AVG(nivel_tanque) AS STATUS_TANQUE, HOUR(fechaPLC) AS GROUPER , IF(operacion = 1, 'Motor On, Opreacion On', 'Motor On, Operacion Off') AS operacion, operacion AS oprc";
       $query .= " FROM registrosmaquinarias";
       $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '". $params['date'] ."' ";
       // $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '2022-09-02' ";
-      $query .= " AND idmaquina = 1 AND nivel_tanque > 473 AND arranque = 1";
+      $query .= " AND idmaquina = ". $params['idMachine'] ." AND nivel_tanque > 473 AND arranque = 1";
       $query .= " GROUP BY HOUR(fechaPLC), operacion";
       $query .= " ORDER BY HOUR(fechaPLC)";
 
@@ -228,7 +237,7 @@ class MaquinasModel extends DataBase
 
       $ultimoNivelTanque = $this->getLastLevenTank("'%Y-%m-%d'", $params['date'], $params['idMachine'], 'HOUR(fechaPLC)')[0]['nivel_tanque'];
 
-      // return [$this->select( $query ), $ultimoNivelTanque];
-      return $this->select( $query );
+      return [$this->select( $query ), $ultimoNivelTanque];
+      // return $this->select( $query );
     }
 }
