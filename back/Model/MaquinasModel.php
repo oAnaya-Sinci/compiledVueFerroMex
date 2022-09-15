@@ -78,9 +78,9 @@ class MaquinasModel extends DataBase
               $typeGroup = "HOUR(fechaPLC)";
               $formatDate = "'%Y-%m-%d %H'";
               $formatDate2 = "'%Y-%m-%d'";
-              $order = ", STATUS_TANQUE ASC";
-              // $order = ", STATUS_TANQUE DESC";
-              break;
+              // $order = ", STATUS_TANQUE ASC";
+              $order = ", STATUS_TANQUE DESC";
+              break; 
 
             case "month":
               $newDate = $newDate[0] . "-" . $newDate[1];
@@ -121,7 +121,16 @@ class MaquinasModel extends DataBase
 
         // die( var_dump( $query ) );
 
-        return [$this->select($query), $ultimoNivelTanque];
+        $nivelDiesel = $this->select($query);
+
+        $query = "SELECT DISTINCT";
+        $query .= " DATE_FORMAT(fechaPLC, '%Y-%m-%d %H') AS Date_flag, operacion";
+        $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND operacion = 1 AND idmaquina = ". $params['idMachine'];
+        $query .= " GROUP BY DATE_FORMAT(fechaPLC, '%Y-%m-%d %H');";
+
+        $operacionData = $this->select($query);
+
+        return [$nivelDiesel, $ultimoNivelTanque, $operacionData];
     }
 
     public function getAcumuladoKilometers()
