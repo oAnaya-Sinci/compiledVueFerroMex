@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "a465d7f5c901aaa2587e",
+    "revision": "997511910fced66a62e4",
     "url": "/css/app.7ad454ef.css"
   },
   {
-    "revision": "a465d7f5c901aaa2587e",
-    "url": "/js/app.c7ba664c.js"
+    "revision": "997511910fced66a62e4",
+    "url": "/js/app.f532e0a4.js"
   },
   {
     "revision": "e2d928018cb3ba2a805c",
@@ -36,24 +36,24 @@ self.__precacheManifest = [
     "url": "/img/nucleo-icons.ae42fa52.svg"
   },
   {
-    "revision": "73e18368b876774451aa02b58935ab3e",
+    "revision": "b6cc14ae2f4d1dbb43cea04be2e746e7",
     "url": "/index.html"
-  },
-  {
-    "revision": "d41d8cd98f00b204e9800998ecf8427e",
-    "url": "/.gitkeep"
-  },
-  {
-    "revision": "be74132f42ae1d3502f9a9b9fff68ac1",
-    "url": "/Dashboard.PNG"
   },
   {
     "revision": "996d8248f580f8e26e6c45c67da9b5a6",
     "url": "/favicon.png"
   },
   {
+    "revision": "be74132f42ae1d3502f9a9b9fff68ac1",
+    "url": "/Dashboard.PNG"
+  },
+  {
     "revision": "e9b79bbc135cf6d3d1e4309f796c7391",
     "url": "/img/backgroundFerroMex-6.jpg"
+  },
+  {
+    "revision": "d41d8cd98f00b204e9800998ecf8427e",
+    "url": "/.gitkeep"
   },
   {
     "revision": "a9615bac158705203261e8348f574cc8",
@@ -68,16 +68,16 @@ self.__precacheManifest = [
     "url": "/img/faces/face-1.jpg"
   },
   {
+    "revision": "0e953b1ea6d6e3addd7210e9c7c420a7",
+    "url": "/img/faces/face-2.jpg"
+  },
+  {
     "revision": "ce7a6b79aa55041f7ae36f6ce22231fe",
     "url": "/img/faces/face-3.jpg"
   },
   {
     "revision": "0b68eb8f1cde1fc9987a9196df05b96a",
     "url": "/img/faces/face-4.jpg"
-  },
-  {
-    "revision": "0e953b1ea6d6e3addd7210e9c7c420a7",
-    "url": "/img/faces/face-2.jpg"
   },
   {
     "revision": "4ab22eca4053c14a34e4bdb6390deae9",
@@ -88,48 +88,52 @@ self.__precacheManifest = [
     "url": "/img/faces/face-6.jpg"
   },
   {
-    "revision": "83c4dc1946b4c2fc595d0b983206bf09",
-    "url": "/img/favicon_frr_mx.ico"
+    "revision": "43b98081492ac3bcb4a1fac6cf709403",
+    "url": "/img/faces/tim_vector.jpe"
   },
   {
     "revision": "bf1684a30a86ba1b222aab3acff16356",
     "url": "/img/faces/face-7.jpg"
   },
   {
-    "revision": "43b98081492ac3bcb4a1fac6cf709403",
-    "url": "/img/faces/tim_vector.jpe"
-  },
-  {
-    "revision": "996d8248f580f8e26e6c45c67da9b5a6",
-    "url": "/img/favicon.png"
+    "revision": "83c4dc1946b4c2fc595d0b983206bf09",
+    "url": "/img/favicon_frr_mx.ico"
   },
   {
     "revision": "29330e4bf0a59799d2472d861bae7062",
     "url": "/img/FerromexLogo.jpg"
   },
   {
-    "revision": "783dbf397ccb731e02db930e7dc50015",
-    "url": "/img/foto_galeria_multimedia.jpg"
+    "revision": "996d8248f580f8e26e6c45c67da9b5a6",
+    "url": "/img/favicon.png"
   },
   {
-    "revision": "0a337c37f03c0462996b7b03758fa72b",
-    "url": "/img/loading-bubbles.svg"
+    "revision": "783dbf397ccb731e02db930e7dc50015",
+    "url": "/img/foto_galeria_multimedia.jpg"
   },
   {
     "revision": "d27fbc90c2e644dfdc9765640dc713b9",
     "url": "/img/mask.png"
   },
   {
+    "revision": "0a337c37f03c0462996b7b03758fa72b",
+    "url": "/img/loading-bubbles.svg"
+  },
+  {
     "revision": "f575a04ebbb31b5798a4c54783e745a2",
     "url": "/img/new_logo.png"
+  },
+  {
+    "revision": "cd253e23ed052deeb80b42d2ed772183",
+    "url": "/img/sidebar-3.jpg"
   },
   {
     "revision": "7a4ce7cc040fc1cb8176cde106e9232f",
     "url": "/img/sidebar-2.jpg"
   },
   {
-    "revision": "cd253e23ed052deeb80b42d2ed772183",
-    "url": "/img/sidebar-3.jpg"
+    "revision": "6be21e8a1b7d63048728851c6003e189",
+    "url": "/img/sidebar-1.jpg"
   },
   {
     "revision": "9ebea76ee1225f00d882b21547a7b49f",
@@ -140,20 +144,16 @@ self.__precacheManifest = [
     "url": "/img/sidebar-4.jpg"
   },
   {
-    "revision": "6be21e8a1b7d63048728851c6003e189",
-    "url": "/img/sidebar-1.jpg"
-  },
-  {
     "revision": "44bf13a71a4db6e15913fe8af9296711",
     "url": "/img/tim_80x80.png"
   },
   {
-    "revision": "c2a605fbc0e687b2e1b4b90a7c445cdd",
-    "url": "/img/vue-logo.png"
-  },
-  {
     "revision": "4197fddbc7e8ea4e381d9350243d784f",
     "url": "/img/sidebar-7.jpg"
+  },
+  {
+    "revision": "c2a605fbc0e687b2e1b4b90a7c445cdd",
+    "url": "/img/vue-logo.png"
   },
   {
     "revision": "a07bb811447e50c195622ed97b2a08ce",
