@@ -46,8 +46,6 @@ class MaquinasModel extends DataBase
         // $query .= " LIMIT 1";
       }
 
-        // die( var_dump( $query ) );
-
         return $this->select($query);
     }
 
@@ -57,7 +55,6 @@ class MaquinasModel extends DataBase
         $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '" . $params['startDate'] ."' AND idMaquina = " . $params['idMachine'];
 
         $params['allData'] != 'false' ? "" : $query .=  " AND arranque = 1";
-        // $query .=  " AND arranque = 1";
 
         $query .= " ORDER BY id ASC";
 
@@ -122,18 +119,7 @@ class MaquinasModel extends DataBase
         $query .= ", arranque, operacion";
         $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
         $query .= " AND nivel_tanque > 473";
-        // $query .=  " AND arranque = 1";
         $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .")". $order .";";
-
-        // $query = "SELECT";
-        // $query .= " AVG(nivel_tanque) AS STATUS_TANQUE, DATE_FORMAT(fechaPLC, ". $formatDate .") AS Date_flag, ".$typeGroup." AS GROUPER";
-        // $query .= ", arranque, operacion";
-        // $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
-        // $query .= " AND nivel_tanque > 473";
-        // $query .= " GROUP BY DATE_FORMAT(fechaPLC, ". $formatDate ."), " . $typeGroup . ", operacion, arranque";
-        // $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .")". $order .";";
-
-        // die( var_dump( $query ) );
 
         $nivelDiesel = $this->select($query);
 
@@ -154,25 +140,33 @@ class MaquinasModel extends DataBase
     
     public function getAVGDiesel($params)
     {
-
       $auxdate = explode(" ", $params['startDate'])[0];
       $auxdate = explode("-", $auxdate);
 
       $query = "SELECT";
-		  $query .= " MAX(nivel_tanque) AS nivel_max,";
-      $query .= " MIN(nivel_tanque) AS nivel_min";
-      $query .= " , (MAX(nivel_tanque) - MIN(nivel_tanque)) AS tot_nivel";
-      $query .= " , DAY(fechaPLC) AS DAY";
-      $query .= " , HOUR(fechaPLC) AS HOUR";
-      $query .= " FROM registrosmaquinarias";
-      $query .= " WHERE DATE_FORMAT( fechaPLC, '%Y-%m' ) = '". $auxdate[0]."-". $auxdate[1] ."'";
-      $query .= " AND arranque = 1";
+      $query .= " N_MAX AS nivel_max,";
+      $query .= " N_MIN AS nivel_min,";
+      $query .= " (N_MAX - N_MIN) AS tot_nivel,";
+      $query .= " DAY_MAX AS DAY,";
+      $query .= " HOUR_MAX AS HOUR";
+      // $query .= " , (SELECT GROUP_CONCAT(latitud) FROM registrosmaquinarias WHERE id BETWEEN ID_MAX AND ID_MIN ) AS latitud";
+      // $query .= " , (SELECT GROUP_CONCAT(longitud) FROM registrosmaquinarias WHERE id BETWEEN ID_MAX AND ID_MIN ) AS longitud";
+      $query .= " FROM (";
+      $query .= " (SELECT id AS ID_MAX, nivel_tanque AS N_MAX, DAY(fechaPLC) AS DAY_MAX, HOUR(fechaPLC) AS HOUR_MAX FROM registrosmaquinarias WHERE id IN(";
+      $query .= " SELECT MIN( id ) AS MAX_ID FROM registrosmaquinarias";
+      $query .= " WHERE arranque = 1 AND DATE_FORMAT( fechaPLC, '%Y-%m' ) = '". $auxdate[0]."-". $auxdate[1] ."' AND nivel_tanque > 473";
       $query .= " AND idMaquina = " . $params['idMachine'];
-      $query .= " AND nivel_tanque > 473";
       $query .= " GROUP BY DAY(fechaPLC), HOUR(fechaPLC)";
-      $query .= " ORDER BY DAY(fechaPLC), HOUR(fechaPLC);";
-
-      // die( var_dump( $query ) );
+      $query .= " ORDER BY DAY(fechaPLC), HOUR(fechaPLC) )) AS MAX_VAL,";
+      $query .= " (SELECT id AS ID_MIN, nivel_tanque AS N_MIN, DAY(fechaPLC) AS DAY_MIN, HOUR(fechaPLC) AS HOUR_MIN FROM registrosmaquinarias WHERE id IN (";
+      $query .= " SELECT MAX( id ) AS MIN_ID FROM registrosmaquinarias";
+      $query .= " WHERE arranque = 1 AND DATE_FORMAT( fechaPLC, '%Y-%m' ) = '". $auxdate[0]."-". $auxdate[1] ."' AND nivel_tanque > 473";
+      $query .= " AND idMaquina = " . $params['idMachine'];
+      $query .= " GROUP BY DAY(fechaPLC), HOUR(fechaPLC)";
+      $query .= " ORDER BY DAY(fechaPLC), HOUR(fechaPLC) )) AS MIN_VAL ) ";
+      $query .= " WHERE DAY_MAX = DAY_MIN AND HOUR_MAX = HOUR_MIN";
+      $query .= " HAVING ( N_MAX - N_MIN ) >= 0";
+      $query .= " ORDER BY DAY_MAX, HOUR_MAX";
 
       return $this->select($query);
     }
@@ -185,23 +179,17 @@ class MaquinasModel extends DataBase
     public function getRegistroNotificacion()
     {
         return $this->select("SELECT id, codigoError AS codigo, mensajeError AS mensaje, tipoError AS tipo, idMaquina AS maquina, fechaRegistro AS fecha, fechaMaquina AS fecha_plc FROM alarmsLogs ORDER BY id DESC");
-        // return $this->select("SELECT * FROM registrosmaquinarias");
     }
     
     public function setRegistroNotificacion($params)
     {
-      // $data = json_decode( $params, true )['data'];
       $data = json_decode( $params, true );
 
       $dataMessage = $data['dataError'];
       $dataFromDB = $data['dataError']['dataDB'];
 
-      // die( var_dump( $data ) );
-      
       $query = "INSERT INTO alarmsLogs(codigoError, mensajeError, tipoError, idMaquina, fechaRegistro, fechaMaquina)";
       $query .= "VALUES( '".$dataMessage['codigoError']."', '".$dataMessage['message']."', '".$dataMessage['typeError']."', ". $dataFromDB['idMaquina'] .", NOW(), '". $dataFromDB['fecha'] ."' )";
-  
-      // die( var_dump( $query ) );
 
       return $this->insert($query);
     }
@@ -213,37 +201,34 @@ class MaquinasModel extends DataBase
 
     public function getDataTable($params){
 
-      // $query = "SELECT";
-      // // $query .= " ( MAX(nivel_tanque) - MIN(nivel_tanque) ) AS consumo, HOUR(fechaPLC) AS hora , IF(operacion = 1, 'Motor On, Opreacion On', 'Motor On, Operacion Off') AS operacion, operacion AS oprc";
-      // $query .= " AVG(nivel_tanque) AS STATUS_TANQUE, HOUR(fechaPLC) AS GROUPER , IF(operacion = 1, 'Motor On, Opreacion On', 'Motor On, Operacion Off') AS operacion, operacion AS oprc";
-      // $query .= " FROM registrosmaquinarias";
-      // $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '". $params['date'] ."' ";
-      // // $query .= " WHERE DATE_FORMAT(fechaPLC, '%Y-%m-%d') = '2022-09-02' ";
-      // $query .= " AND idmaquina = ". $params['idMachine'] ." AND nivel_tanque > 473 AND arranque = 1";
-      // $query .= " GROUP BY HOUR(fechaPLC), operacion";
-      // $query .= " ORDER BY HOUR(fechaPLC)";
-
       $auxdate = explode(" ", $params['date'])[0];
       $auxdate = explode("-", $auxdate);
 
       $query = "SELECT";
-		  $query .= " MAX(nivel_tanque) AS nivel_max,";
-      $query .= " MIN(nivel_tanque) AS nivel_min";
-      $query .= " , (MAX(nivel_tanque) - MIN(nivel_tanque)) AS tot_nivel";
-      $query .= " , operacion";
-      $query .= " , DAY(fechaPLC) AS DAY";
-      $query .= " , HOUR(fechaPLC) AS HOUR";
-      $query .= " FROM registrosmaquinarias";
-      $query .= " WHERE DATE_FORMAT( fechaPLC, '%Y-%m' ) = '". $auxdate[0]."-". $auxdate[1] ."'";
-      $query .= " AND arranque = 1";
+      $query .= " N_MAX AS nivel_max,";
+      $query .= " N_MIN AS nivel_min,";
+      $query .= " (N_MAX - N_MIN) AS tot_nivel,";
+      $query .= " DAY_MAX AS DAY,";
+      $query .= " HOUR_MAX AS HOUR,";
+      $query .= " operacion";
+      $query .= " , (SELECT GROUP_CONCAT(latitud) FROM registrosmaquinarias WHERE id BETWEEN ID_MAX AND ID_MIN ) AS latitud";
+      $query .= " , (SELECT GROUP_CONCAT(longitud) FROM registrosmaquinarias WHERE id BETWEEN ID_MAX AND ID_MIN ) AS longitud";
+      $query .= " FROM (";
+      $query .= " (SELECT id AS ID_MAX, nivel_tanque AS N_MAX, DAY(fechaPLC) AS DAY_MAX, HOUR(fechaPLC) AS HOUR_MAX, operacion FROM registrosmaquinarias WHERE id IN(";
+      $query .= " SELECT MIN( id ) AS MAX_ID FROM registrosmaquinarias";
+      $query .= " WHERE arranque = 1 AND DATE_FORMAT( fechaPLC, '%Y-%m' ) = '". $auxdate[0]."-". $auxdate[1] ."' AND nivel_tanque > 473";
+      $query .= " GROUP BY DAY(fechaPLC), HOUR(fechaPLC)";
+      $query .= " ORDER BY DAY(fechaPLC), HOUR(fechaPLC) )) AS MAX_VAL,";
+      $query .= " (SELECT id AS ID_MIN, nivel_tanque AS N_MIN, DAY(fechaPLC) AS DAY_MIN, HOUR(fechaPLC) AS HOUR_MIN FROM registrosmaquinarias WHERE id IN (";
+      $query .= " SELECT MAX( id ) AS MIN_ID FROM registrosmaquinarias";
+      $query .= " WHERE arranque = 1 AND DATE_FORMAT( fechaPLC, '%Y-%m' ) = '". $auxdate[0]."-". $auxdate[1] ."' AND nivel_tanque > 473";
       $query .= " AND idMaquina = " . $params['idMachine'];
-      $query .= " AND nivel_tanque > 473";
-      $query .= " GROUP BY DAY(fechaPLC), HOUR(fechaPLC), operacion";
-      $query .= " ORDER BY operacion, DAY(fechaPLC), HOUR(fechaPLC);";
-
-      // die( var_dump( $query ) );
+      $query .= " GROUP BY DAY(fechaPLC), HOUR(fechaPLC)";
+      $query .= " ORDER BY DAY(fechaPLC), HOUR(fechaPLC) )) AS MIN_VAL ) ";
+      $query .= " WHERE DAY_MAX = DAY_MIN AND HOUR_MAX = HOUR_MIN";
+      $query .= " HAVING ( N_MAX - N_MIN ) >= 0";
+      $query .= " ORDER BY operacion, DAY_MAX, HOUR_MAX";
 
       return $this->select( $query );
-      // return $this->select( $query );
     }
 }
