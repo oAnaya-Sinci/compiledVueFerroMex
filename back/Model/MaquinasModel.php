@@ -66,71 +66,136 @@ class MaquinasModel extends DataBase
 
     public function getAcumuladoDiesel($params)
     {
+        // $auxdate = explode(" ", $params['startDate'])[0];
+
+        // $newDate = explode("-", $auxdate);
+        // $typeGroup = "";
+        // $formatDate = "";
+        // $formatDate2 = "";
+        // $order = "";
+        // switch($params['type']){
+
+        //     case "hour":
+        //       $newDate = $params['startDate'];
+        //       $typeGroup = "MINUTE(fechaPLC)";
+        //       $formatDate = "'%Y-%m-%d %H:%i'";
+        //       $formatDate2 = "'%Y-%m-%d %H'";
+        //       // $order = ", STATUS_TANQUE ASC";
+        //       $order = ", STATUS_TANQUE DESC";
+        //       break;
+
+        //     case "day":
+        //       $newDate = $auxdate;
+        //       $typeGroup = "HOUR(fechaPLC)";
+        //       $formatDate = "'%Y-%m-%d %H'";
+        //       $formatDate2 = "'%Y-%m-%d'";
+        //       // $order = ", STATUS_TANQUE ASC";
+        //       $order = ", STATUS_TANQUE DESC";
+        //       break; 
+
+        //     case "month":
+        //       $newDate = $newDate[0] . "-" . $newDate[1];
+        //       $typeGroup = "DAY(fechaPLC)";
+        //       $formatDate = "'%Y-%m-%d'";
+        //       $formatDate2 = "'%Y-%m'";
+        //       // $order = ", STATUS_TANQUE ASC";
+        //       $order = ", STATUS_TANQUE DESC";
+        //       break;
+
+        //     case "year":
+        //       $newDate = $newDate[0];
+        //       $typeGroup = "MONTH(fechaPLC)";
+        //       $formatDate = "'%Y-%m'";
+        //       $formatDate2 = "'%Y'";
+        //       // $order = ", STATUS_TANQUE ASC";
+        //       $order = ", STATUS_TANQUE DESC";
+        //       break;
+        // }
+
+        // $ultimoNivelTanque = $this->getLastLevenTank($formatDate2, $newDate, $params['idMachine'])[0]['nivel_tanque'];
+
+        // $query = "SELECT DISTINCT";
+        // $query .= " nivel_tanque AS STATUS_TANQUE, DATE_FORMAT(fechaPLC, ". $formatDate .") AS Date_flag, ".$typeGroup." AS GROUPER";
+        // $query .= ", arranque, operacion";
+        // $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
+        // $query .= " AND nivel_tanque > 473";
+        // $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .")". $order .";";
+        
+        // $nivelDiesel = $this->select($query);
+
+        // $query = "SELECT DISTINCT";
+        // $query .= " DATE_FORMAT(fechaPLC, '%Y-%m-%d %H') AS Date_flag, operacion";
+        // $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND operacion = 1 AND idmaquina = ". $params['idMachine'];
+        // $query .= " GROUP BY DATE_FORMAT(fechaPLC, '%Y-%m-%d %H');";
+
+        // $operacionData = $this->select($query);
+
+        // return [$nivelDiesel, $ultimoNivelTanque, $operacionData];
+
         $auxdate = explode(" ", $params['startDate'])[0];
+        $auxdate = explode("-", $auxdate);
 
-        $newDate = explode("-", $auxdate);
-        $typeGroup = "";
+        $GROUPER = "";
         $formatDate = "";
-        $formatDate2 = "";
-        $order = "";
+        $newDate = "";
         switch($params['type']){
+          case "day":
+            $GROUPER = " HOUR(fechaPLC)";
+            $formatDate = "%Y-%m-%d";
+            $newDate = $auxdate[0] . "-" . $auxdate[1] . "-" . $auxdate[2];
+            break; 
 
-            case "hour":
-              $newDate = $params['startDate'];
-              $typeGroup = "MINUTE(fechaPLC)";
-              $formatDate = "'%Y-%m-%d %H:%i'";
-              $formatDate2 = "'%Y-%m-%d %H'";
-              // $order = ", STATUS_TANQUE ASC";
-              $order = ", STATUS_TANQUE DESC";
-              break;
-
-            case "day":
-              $newDate = $auxdate;
-              $typeGroup = "HOUR(fechaPLC)";
-              $formatDate = "'%Y-%m-%d %H'";
-              $formatDate2 = "'%Y-%m-%d'";
-              // $order = ", STATUS_TANQUE ASC";
-              $order = ", STATUS_TANQUE DESC";
-              break; 
-
-            case "month":
-              $newDate = $newDate[0] . "-" . $newDate[1];
-              $typeGroup = "DAY(fechaPLC)";
-              $formatDate = "'%Y-%m-%d'";
-              $formatDate2 = "'%Y-%m'";
-              // $order = ", STATUS_TANQUE ASC";
-              $order = ", STATUS_TANQUE DESC";
-              break;
-
-            case "year":
-              $newDate = $newDate[0];
-              $typeGroup = "MONTH(fechaPLC)";
-              $formatDate = "'%Y-%m'";
-              $formatDate2 = "'%Y'";
-              // $order = ", STATUS_TANQUE ASC";
-              $order = ", STATUS_TANQUE DESC";
-              break;
+          case "month":
+            $GROUPER = " DAY(fechaPLC)";
+            $formatDate = "%Y-%m";
+            $newDate = $auxdate[0] . "-" . $auxdate[1];
+            break;
         }
 
-        $ultimoNivelTanque = $this->getLastLevenTank($formatDate2, $newDate, $params['idMachine'])[0]['nivel_tanque'];
-
-        $query = "SELECT DISTINCT";
-        $query .= " nivel_tanque AS STATUS_TANQUE, DATE_FORMAT(fechaPLC, ". $formatDate .") AS Date_flag, ".$typeGroup." AS GROUPER";
-        $query .= ", arranque, operacion";
-        $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND idmaquina = ". $params['idMachine'];
+        $query = "SELECT";
+        $query .= " nivel_tanque AS STATUS_TANQUE,";
+        $query .= $GROUPER . " AS GROUPER";
+        $query .= " FROM registrosmaquinarias ";
+        $query .= " WHERE id IN(";
+        // $query .= " SELECT MAX( id ) FROM registrosmaquinarias";
+        $query .= " SELECT MIN( id ) FROM registrosmaquinarias";
+        $query .= " WHERE DATE_FORMAT( fechaPLC, '" . $formatDate . "' ) = '". $newDate ."'";
+        // $query .= " AND arranque = 1";
         $query .= " AND nivel_tanque > 473";
-        $query .= " ORDER BY DATE_FORMAT(fechaPLC, ". $formatDate .")". $order .";";
+        $query .= " GROUP BY MONTH(fechaPLC), DAY(fechaPLC), HOUR(fechaPLC)";
+        $query .= " ORDER BY MONTH(fechaPLC), DAY(fechaPLC), HOUR(fechaPLC) )"; 
+        $query .= " ORDER BY GROUPER;"; 
 
         $nivelDiesel = $this->select($query);
 
-        $query = "SELECT DISTINCT";
-        $query .= " DATE_FORMAT(fechaPLC, '%Y-%m-%d %H') AS Date_flag, operacion";
-        $query .= " FROM registrosmaquinarias WHERE DATE_FORMAT(fechaPLC, ". $formatDate2 .") = '".$newDate."' AND operacion = 1 AND idmaquina = ". $params['idMachine'];
-        $query .= " GROUP BY DATE_FORMAT(fechaPLC, '%Y-%m-%d %H');";
+        $query = "SELECT";
+        $query .= " nivel_tanque AS STATUS_TANQUE,";
+        $query .= $GROUPER . " AS GROUPER";
+        $query .= " FROM registrosmaquinarias ";
+        $query .= " WHERE id IN(";
+        // $query .= " SELECT MAX( id ) FROM registrosmaquinarias";
+        $query .= " SELECT MIN( id ) FROM registrosmaquinarias";
+        $query .= " WHERE DATE_FORMAT( fechaPLC, '" . $formatDate . "' ) = '". $newDate ."'";
+        $query .= " AND arranque = 1";
+        $query .= " AND nivel_tanque > 473";
+        $query .= " GROUP BY MONTH(fechaPLC), DAY(fechaPLC), HOUR(fechaPLC)";
+        $query .= " ORDER BY MONTH(fechaPLC), DAY(fechaPLC), HOUR(fechaPLC) )"; 
+        $query .= " ORDER BY GROUPER;"; 
 
-        $operacionData = $this->select($query);
+        $nivelDieselArranque = $this->select($query);
 
-        return [$nivelDiesel, $ultimoNivelTanque, $operacionData];
+        $query = "SELECT HOUR(fechaPLC) AS GROUPER, operacion";
+        $query .= " FROM registrosmaquinarias";
+        $query .= " WHERE DATE_FORMAT(fechaPLC, '" . $formatDate . "') =  '". $newDate ."'";
+        $query .= " AND nivel_tanque > 473";
+        $query .= " AND arranque = 1";
+        $query .= " GROUP BY HOUR(fechaPLC), operacion";
+        $query .= " HAVING operacion = 1";
+        $query .= " ORDER BY HOUR(fechaPLC);";
+
+        $nivelDieselOperacion = $this->select($query);
+
+        return[$nivelDiesel, $nivelDieselArranque, $nivelDieselOperacion];
     }
 
     public function getAcumuladoKilometers()
